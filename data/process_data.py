@@ -6,10 +6,18 @@ import sqlite3
 
 def load_data(messages_filepath, categories_filepath):
     """
-    Combine the categories and messages into a single DF with boolean values
-    :param messages_filepath:
-    :param categories_filepath:
-    :return:
+        INPUT
+        messages_filepath - string
+        categories_filepath - string
+
+        OUTPUT
+        df - A datafram
+        y - the corresponding response vector
+
+        This function searches for the listing id of available listings and returns the price
+        1. If the price column in the row is null
+        2. Search for the listing id in the available listings frame
+        3. Get the price
     """
     messages = pd.read_csv(messages_filepath)
 

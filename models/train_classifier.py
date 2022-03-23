@@ -70,10 +70,6 @@ def tokenize(text):
 
 
 def build_model():
-    """
-    Build the model
-    :return cv:
-    """
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -85,7 +81,7 @@ def build_model():
         'vect__max_df': [0.5],
         'clf__estimator__n_estimators': [10]
     }
-
+    
     cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=-1, cv=3, verbose=3)
 
     return cv
