@@ -6,18 +6,14 @@ import sqlite3
 
 def load_data(messages_filepath, categories_filepath):
     """
+        Load the data into a dataframe
+
         INPUT
         messages_filepath - string
         categories_filepath - string
 
         OUTPUT
-        df - A datafram
-        y - the corresponding response vector
-
-        This function searches for the listing id of available listings and returns the price
-        1. If the price column in the row is null
-        2. Search for the listing id in the available listings frame
-        3. Get the price
+        df - A dataframe
     """
     messages = pd.read_csv(messages_filepath)
 
@@ -30,9 +26,13 @@ def load_data(messages_filepath, categories_filepath):
 
 def clean_data(df):
     """
-    Clean the data and prepare for load
-    :param df:
-    :return df:
+        Clean the data and prepare for load
+
+        INPUT
+        df - Pandas.DataFrame
+
+        OUTPUT
+        df - Pandas.DataFrame
     """
     categories = df['categories'].str.split(';', expand=True)
 
@@ -67,10 +67,11 @@ def clean_data(df):
 
 def save_data(df, database_filename):
     """
-    Save the data into the database for the ML pipeline
-    :param df:
-    :param database_filename:
-    :return:
+        Save the data into the database for the ML pipeline
+
+        INPUT
+        df - Pandas.DataFrame
+        database_filename - string
     """
     # Setup connection
     conn = sqlite3.connect(database_filename)

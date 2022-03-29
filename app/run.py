@@ -2,61 +2,56 @@ import json
 import plotly
 import sqlite3
 
-import pandas as pd
+import joblib
 
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
+import pandas as pd
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
-from sklearn.externals import joblib
+from plotly.graph_objs import Bar, Pie
+
+from models.tokenizer import tokenize
 
 app = Flask(__name__)
 
-def tokenize(text):
-    tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
-    return clean_tokens
-
+print(app.instance_path)
 
 # load data
-conn = sqlite3.connect('data/DisasterResponse.sqlite')
+conn = sqlite3.connect('../data/DisasterResponse.sqlite')
 df = pd.read_sql('SELECT * FROM categorized_messages', conn)
 
 # load model
-model = joblib.load("models/model.sav")
+model = joblib.load("../models/model.sav")
 
 
-# index webpage displays cool visuals and receives user input text for model
+# index webpage displays the graphs receives user input text for model
 @app.route('/')
 @app.route('/index')
 def index():
-    
-    # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
-    
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+
+    categories = df[['related', 'request',
+                     'offer', 'aid_related', 'medical_help', 'medical_products',
+                     'search_and_rescue', 'security', 'military', 'child_alone', 'water',
+                     'food', 'shelter', 'clothing', 'money', 'missing_people', 'refugees',
+                     'death', 'other_aid', 'infrastructure_related', 'transport',
+                     'buildings', 'electricity', 'tools', 'hospitals', 'shops',
+                     'aid_centers', 'other_infrastructure', 'weather_related', 'floods',
+                     'storm', 'fire', 'earthquake', 'cold', 'other_weather',
+                     'direct_report']].copy()
+    category_names = list(categories.columns)
+
+    # create graphs
     graphs = [
         {
             'data': [
                 Bar(
-                    x=genre_names,
-                    y=genre_counts
+                    x=category_names,
+                    y=categories.sum()
                 )
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Messages per category',
                 'yaxis': {
                     'title': "Count"
                 },
@@ -64,15 +59,28 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        {
+            'data': [
+                Pie(
+                    values=categories.sum(),
+                    labels=category_names
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of messages',
+                'height': 800,
+                'width': 1200,
+            }
         }
     ]
     
     # encode plotly graphs in JSON
-    ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     
     # render web page with plotly graphs
-    return render_template('master.html', ids=ids, graphJSON=graphJSON)
+    return render_template('master.html', graphJSON=graphJSON)
 
 
 # web page that handles user query and displays model results
@@ -94,7 +102,7 @@ def go():
 
 
 def main():
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    app.run(host='127.0.0.1', port=3000, debug=True)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,38 @@
+.btn.btn-primary {
+    background-color: #ff5c6b;
+    border-color: #ff5c5c;
+    border-radius: 0;
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:active {
+    background-color: #ff5c6b;
+    border-color: #ff5c5c;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    background-color: #ff5c6b;
+    border-color: #ff5c5c;
+}
+
+.nav-link,
+.nav-link:hover {
+    color: #ff5c6b;
+}
+
+div.tab-pane:not(.active) * {
+    display: none;
+}
+
+.form-control {
+    border: none;
+    border-bottom: 2px solid #cecece;
+    border-radius: 0;
+    padding: .375rem 0;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-bottom: 2px solid #ff5c6b;
+}

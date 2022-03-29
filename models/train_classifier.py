@@ -1,16 +1,10 @@
 # import libraries
-import re
 import pickle
 import nltk
 import sqlite3
 import sys
 
 import pandas as pd
-
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem.porter import PorterStemmer
-from nltk.stem import WordNetLemmatizer
 
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report
@@ -19,11 +13,20 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 
+from models.tokenizer import tokenize
+
+
 def load_data(database_filepath):
     """
-    Load the data into the script
-    :param database_filepath:
-    :return X, y, category_names:
+        Load the data into the script
+
+        INPUT
+        database_filepath - string
+
+        OUTPUT
+        X - Pandas.DataFrame
+        y - Pandas.DataFrame
+        category_names = Pandas.Series
     """
     conn = sqlite3.connect(database_filepath)
     df = pd.read_sql('SELECT * FROM categorized_messages', conn)
@@ -38,63 +41,30 @@ def load_data(database_filepath):
     return X, y, category_names
 
 
-def tokenize(text):
-    """
-    Tokenizer for the ML pipeline
-    :param text:
-    :return:
-    """
-    # Normalize text
-    text = text.strip()
-    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
-    text = re.sub(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", '', text)
-
-    # Fetch tokens
-    tokens = []
-
-    english_stopwords = stopwords.words("english")
-
-    lemmatizer = WordNetLemmatizer()
-
-    stemmer = PorterStemmer()
-
-    for token in word_tokenize(text):
-        if token not in english_stopwords:
-            lemmatized = lemmatizer.lemmatize(token)
-
-            stemmed = stemmer.stem(lemmatized)
-
-            tokens.append(stemmed)
-
-    return tokens
-
-
 def build_model():
+    """
+        Builds the ML pipeline to use to train the model.
+
+        OUTPUT
+        pipeline sklearn.Pipeline
+    """
     pipeline = Pipeline([
-        ('vect', CountVectorizer(tokenizer=tokenize)),
-        ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+        ('vect', CountVectorizer(tokenizer=tokenize, max_df=0.8)),
+        ('tfidf', TfidfTransformer(sublinear_tf=True)),
+        ('clf', MultiOutputClassifier(RandomForestClassifier(n_jobs=-1, verbose=1)))
     ])
 
-    parameters = {
-        'tfidf__use_idf': (True, False),
-        'vect__max_df': [0.5],
-        'clf__estimator__n_estimators': [10]
-    }
-    
-    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=-1, cv=3, verbose=3)
-
-    return cv
-
+    return pipeline
 
 def evaluate_model(model, X_test, Y_test, category_names):
     """
-    Evaluate the model and print out a classification report
-    :param model:
-    :param X_test:
-    :param Y_test:
-    :param category_names:
-    :return:
+        Evaluate the model and print out a classification report
+
+        INPUT
+        model - sklearn.Pipeline
+        X_test - sklearn.List
+        Y_test - sklearn.List
+        category_names - Pandas.Series
     """
     Y_pred = model.predict(X_test)
 
@@ -102,10 +72,11 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 def save_model(model, model_filepath):
     """
-    Save the completed model for re-use
-    :param model:
-    :param model_filepath:
-    :return:
+        Save the completed model for re-use
+
+        INPUT
+        model - sklearn.Pipeline
+        model_filepath - string
     """
     filename = model_filepath
 
@@ -130,7 +101,7 @@ def main():
         
         print('Training model...')
         model.fit(X_train, y_train)
-        
+
         print('Evaluating model...')
         evaluate_model(model, X_test, y_test, category_names)
 
