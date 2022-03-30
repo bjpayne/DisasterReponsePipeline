@@ -21,21 +21,21 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">Disaster Response Pipeline</a>
+                <a class="navbar-brand d-flex" href="/"><img src="{{ url_for('static', filename='apple-touch-icon.png') }}">Disaster Response Pipeline</a>
                 <a class="nav-link align-end" href="https://github.com/bjpayne/DistasterReponsePipeline">Github</a>
             </div>
         </nav>
 
-        <div class="container mb-5">
+        <div class="container mb-5" id="app">
             <div class="row">
                 <div class="col-12">
                     <h3 class="mb-3">Classify a message</h3>
 
-                    <form action="/go" method="get" class="form">
-                        <div class="mb-3">
-                            <label for="query" class="form-label">Message</label>
+                    <form action="/classify" method="get" class="form">
+                        <div class="mb-3 float-label-group">
+                            <label for="query" class="form-label" :class="{ in: query.length > 0 }">Message</label>
 
-                            <input type="text" class="form-control" name="query" id="query">
+                            <input type="text" class="form-control" name="query" id="query" v-model="query">
                         </div>
 
                         <button type="submit" class="btn btn-primary">Classify Message</button>
@@ -80,13 +80,13 @@
             {% endblock %}
         </div>
         <!-- Jquery -->
-        <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.js"
-                integrity="sha256-T3nUjmQxnOjzHxjuh3cHG9MpgOURumsZOuLHDQTef9I=" crossorigin="anonymous"
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
+                integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"
         ></script>
 
         <!-- Vue -->
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"
-                integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"
+        <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.js"
+                integrity="sha256-T3nUjmQxnOjzHxjuh3cHG9MpgOURumsZOuLHDQTef9I=" crossorigin="anonymous"
         ></script>
 
         <!-- Bootstrap Bundle with Popper -->
@@ -95,7 +95,10 @@
                 crossorigin="anonymous"
         ></script>
 
+        <!-- Plotly -->
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+        <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 
         <script type="text/javascript">
             let graphs = {{graphJSON | safe}};

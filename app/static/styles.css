@@ -10,6 +10,8 @@
     border-color: #ff5c5c;
 }
 
+.nav-pills .nav-link { border-radius: 0 }
+
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
     background-color: #ff5c6b;
@@ -35,4 +37,32 @@ div.tab-pane:not(.active) * {
 .form-control:focus {
     box-shadow: none;
     border-bottom: 2px solid #ff5c6b;
+}
+
+a.navbar-brand img {
+    border-radius: 5px;
+    height: auto;
+    margin-right: 5px;
+    width: 30px;
+}
+
+div.float-label-group { position: relative }
+
+div.float-label-group label.form-label {
+    left: 0;
+    margin: 0;
+    position: absolute;
+    top: 16px;
+    transition: top .25s;
+}
+
+div.float-label-group label.form-label.in {
+    top: -12px
+}
+
+div.float-label-group .form-control { font-size: 1.8rem }
+
+ul#message-results li.list-group-item-danger {
+    background: #ff5c6b;
+    color: #fff;
 }

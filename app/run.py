@@ -53,10 +53,10 @@ def index():
             'layout': {
                 'title': 'Messages per category',
                 'yaxis': {
-                    'title': "Count"
+                    'title': "Number of messages"
                 },
                 'xaxis': {
-                    'title': "Genre"
+                    'title': "Category"
                 }
             }
         },
@@ -84,8 +84,8 @@ def index():
 
 
 # web page that handles user query and displays model results
-@app.route('/go')
-def go():
+@app.route('/classify')
+def classify():
     # save user input in query
     query = request.args.get('query', '') 
 
@@ -93,9 +93,9 @@ def go():
     classification_labels = model.predict([query])[0]
     classification_results = dict(zip(df.columns[4:], classification_labels))
 
-    # This will render the go.html Please see that file. 
+    # This will render the results.html Please see that file.
     return render_template(
-        'go.html',
+        'results.html',
         query=query,
         classification_result=classification_results
     )
