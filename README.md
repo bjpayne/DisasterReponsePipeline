@@ -32,8 +32,33 @@ teams and would streamline response efforts.
 - Plotly
 
 ### Files:
-- ETL Pipeline Preparation.ipynb - Extract, Transform and Load the data from a CSV into the database
-- ML Pipeline Preparation.ipynb - Explore, and clean the data and train the ML model
-- data/process_data.py - Script derived from the ETL notebook
-- models/train_classifier.py - Script derived from ML notebook
+```
+app
+| - static
+| |- android-chrome-192x192.png # android phone favicon
+| |- android-chrome-512x512.png # android table favicon
+| |- apple-touch-icon.png # iOS favicon
+| |- favicon.ico # desktop favicon
+| |- favicon-16x16.png # desktop qhd favicon
+| |- favicon-32x32.png # desktop uhd favicon
+| |- script.js # site scripts
+| |- site.webmanifest # crawl directory listing
+| |- styles.css # site styles
+| - templates
+| |- master.html # main page of web app
+| |- results.html # categorization results page of web app
+data
+| |- disaster_categories.csv # categories data to train ML classifier
+| |- disaster_messages.csv # messages darta to train ML classifier
+| |- DisasterResponse.sqlite # sqlite database with ETL data results
+| |- process_data.py # script to ETL data from .csv files to the database
+models
+| |- model.sav # pickled model for the web app
+| |- tokenize.py # script to tokenize the message CSV corpus
+| |- train_classifier # script to train the ML classifier
+ETL Pipeline Preparation.ipynb # notebook to explore the data and help build out the process_data.py script
+Home Page Graphs ETL.ipynb # notebook to explore the data and help build out the home page of the app
+ML Pipeline Preparation.ipynb # notebook to explore the data and help build out the train_classifier.py
+README.md
+```
 

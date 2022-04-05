@@ -49,12 +49,20 @@ def build_model():
         pipeline sklearn.Pipeline
     """
     pipeline = Pipeline([
-        ('vect', CountVectorizer(tokenizer=tokenize, max_df=0.8)),
-        ('tfidf', TfidfTransformer(sublinear_tf=True)),
-        ('clf', MultiOutputClassifier(RandomForestClassifier(n_jobs=-1, verbose=1)))
+        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('tfidf', TfidfTransformer()),
+        ('clf', MultiOutputClassifier(RandomForestClassifier(n_jobs=-1)))
     ])
 
-    return pipeline
+    parameters = {
+        'vect__max_df': [0.7, 0.8, 0.9, 1.0],
+        'tfidf__sublinear_tf': [True, False],
+        'clf__estimator__n_estimators': [50, 75, 100]
+    }
+
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, verbose=3)
+
+    return cv
 
 def evaluate_model(model, X_test, Y_test, category_names):
     """

@@ -21,13 +21,9 @@ def tokenize(text):
 
     lemmatizer = WordNetLemmatizer()
 
-    stemmer = PorterStemmer()
-
     for token in word_tokenize(text):
         lemmatized = lemmatizer.lemmatize(token)
 
-        stemmed = stemmer.stem(lemmatized)
-
-        tokens.append(stemmed)
+        tokens.append(lemmatized)
 
     return tokens
