@@ -51,16 +51,15 @@ def build_model():
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(RandomForestClassifier(n_jobs=-1)))
+        ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
 
     parameters = {
-        'vect__max_df': [0.7, 0.8, 0.9, 1.0],
-        'tfidf__sublinear_tf': [True, False],
+        'vect__max_df': [0.7, 0.8, 0.9],
         'clf__estimator__n_estimators': [50, 75, 100]
     }
 
-    cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, verbose=3)
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, verbose=3, n_jobs=-1)
 
     return cv
 
